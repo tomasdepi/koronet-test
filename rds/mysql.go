@@ -4,27 +4,36 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/spf13/viper"
 )
 
 var DB *sql.DB
 
-func InitDB() *sql.DB {
-	dsn := "root:root@tcp(localhost:3306)/koronet" // Replace with env/config in real apps
+func InitDB() (*sql.DB, error) {
+	connectionString := fmt.Sprintf("%v:%v@tcp(%v:3306)/%v",
+		viper.GetString("MYSQL_USER"),
+		viper.GetString("MYSQL_PASS"),
+		viper.GetString("MYSQL_HOST"),
+		viper.GetString("MYSQL_NAME"),
+	)
+
 	var err error
-	DB, err = sql.Open("mysql", dsn)
-	if err != nil {
-		log.Fatalf("Failed to open MySQL connection: %v", err)
+
+	for i := 0; i < 10; i++ {
+		DB, err = sql.Open("mysql", connectionString)
+		if err == nil && DB.Ping() == nil {
+			log.Println("MySQL connection established.")
+			return DB, nil
+		}
+
+		log.Println("Waiting for MySQL connection.....")
+		time.Sleep(1 * time.Second)
 	}
 
-	if err = DB.Ping(); err != nil {
-		log.Fatalf("Failed to ping MySQL: %v", err)
-	}
-
-	fmt.Println("MySQL connection established.")
-
-	return DB
+	return nil, err
 }
 
 func CloseDB() {

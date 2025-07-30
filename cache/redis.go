@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/redis/go-redis/v9"
+	"github.com/spf13/viper"
 )
 
 var (
@@ -14,13 +15,13 @@ var (
 
 func StartRedis() *redis.Client {
 
+	addr := viper.GetString("REDIS_HOST")
+
 	redisClient = redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
+		Addr:     addr,
 		Password: "",
 		DB:       0,
 	})
-
-	defer redisClient.Close()
 
 	if err := redisClient.Ping(ctx).Err(); err != nil {
 		log.Fatalf("Failed to connect to Redis: %v", err)
