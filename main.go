@@ -17,5 +17,6 @@ func main() {
 
 	app := core.App{}
 	app.Initialize()
+	defer app.Finalize()
 	app.Run()
 }

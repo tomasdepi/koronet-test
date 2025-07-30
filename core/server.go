@@ -81,3 +81,8 @@ func (app *App) CheckMySQLHealth(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Fprintln(w, "MySQL is alive")
 }
+
+func (app *App) Finalize() {
+	app.DB.Close()
+	app.redis.Close()
+}
