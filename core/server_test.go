@@ -13,7 +13,8 @@ func TestRootHandler(t *testing.T) {
 
 	w := httptest.NewRecorder()
 
-	HelloKoronet(w, req)
+	app := App{}
+	app.HelloKoronet(w, req)
 
 	result := w.Result()
 	defer result.Body.Close()

@@ -2,23 +2,15 @@ package rds
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/spf13/viper"
 )
 
 var DB *sql.DB
 
-func InitDB() (*sql.DB, error) {
-	connectionString := fmt.Sprintf("%v:%v@tcp(%v:3306)/%v",
-		viper.GetString("MYSQL_USER"),
-		viper.GetString("MYSQL_PASS"),
-		viper.GetString("MYSQL_HOST"),
-		viper.GetString("MYSQL_NAME"),
-	)
+func InitDB(connectionString string) (*sql.DB, error) {
 
 	var err error
 

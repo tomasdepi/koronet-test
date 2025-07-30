@@ -5,11 +5,22 @@ import (
 	"testing"
 
 	"github.com/redis/go-redis/v9"
+	"github.com/spf13/viper"
 )
 
+func initTestViper() {
+	viper.Reset() // reset to not override other tests
+	viper.AutomaticEnv()
+	viper.SetDefault("REDIS_HOST", "localhost:6379")
+}
+
 func TestRedisConnection(t *testing.T) {
+
+	initTestViper()
+	addr := viper.GetString("REDIS_HOST")
+
 	rdb := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
+		Addr:     addr,
 		Password: "",
 		DB:       0,
 	})
@@ -26,7 +37,6 @@ func TestRedisConnection(t *testing.T) {
 		t.Fatalf("Failed to set key: %v", err)
 	}
 
-	// Try getting the key
 	val, err := rdb.Get(ctx, "test-key").Result()
 	if err != nil {
 		t.Fatalf("Failed to get key: %v", err)
