@@ -4,7 +4,6 @@ import (
 	"context"
 	"testing"
 
-	"github.com/redis/go-redis/v9"
 	"github.com/spf13/viper"
 )
 
@@ -17,13 +16,8 @@ func initTestViper() {
 func TestRedisConnection(t *testing.T) {
 
 	initTestViper()
-	addr := viper.GetString("REDIS_HOST")
 
-	rdb := redis.NewClient(&redis.Options{
-		Addr:     addr,
-		Password: "",
-		DB:       0,
-	})
+	rdb := StartRedis()
 	defer rdb.Close()
 
 	ctx := context.Background()
