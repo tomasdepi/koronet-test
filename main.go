@@ -1,21 +1,22 @@
 package main
 
 import (
-	"github.com/tomasdepi/koronet-test/cache"
+	"github.com/spf13/viper"
 	"github.com/tomasdepi/koronet-test/core"
-	"github.com/tomasdepi/koronet-test/rds"
 )
 
 func main() {
 
-	redis := cache.StartRedis()
+	viper.AutomaticEnv()
 
-	defer redis.Close()
+	viper.SetDefault("REDIS_HOST", "localhost:6379")
+	viper.SetDefault("MYSQL_HOST", "localhost")
+	viper.SetDefault("MYSQL_USER", "root")
+	viper.SetDefault("MYSQL_PASS", "root")
+	viper.SetDefault("MYSQL_DATABASE", "koronet")
 
-	mysqlClient := rds.InitDB()
-
-	defer mysqlClient.Close()
-
-	core.StartWebServer()
-
+	app := core.App{}
+	app.Initialize()
+	defer app.Finalize()
+	app.Run()
 }

@@ -1,16 +1,42 @@
 package rds
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+
+	"github.com/spf13/viper"
+)
+
+func initTestViper() {
+	viper.Reset() // reset to not override other tests
+	viper.AutomaticEnv()
+
+	viper.SetDefault("MYSQL_HOST", "localhost")
+	viper.SetDefault("MYSQL_USER", "root")
+	viper.SetDefault("MYSQL_PASS", "root")
+	viper.SetDefault("MYSQL_DATABASE", "koronet")
+
+}
 
 func TestDBConnection(t *testing.T) {
-	InitDB()
+
+	initTestViper()
+
+	connectionString := fmt.Sprintf("%v:%v@tcp(%v:3306)/%v",
+		viper.GetString("MYSQL_USER"),
+		viper.GetString("MYSQL_PASS"),
+		viper.GetString("MYSQL_HOST"),
+		viper.GetString("MYSQL_DATABASE"),
+	)
+
+	DB, err := InitDB(connectionString)
 	defer CloseDB()
 
-	if DB == nil {
-		t.Fatal("DB is nil")
+	if err != nil {
+		t.Fatalf("Connection Failed: %v", err)
 	}
 
-	err := DB.Ping()
+	err = DB.Ping()
 	if err != nil {
 		t.Fatalf("Ping failed: %v", err)
 	}
