@@ -9,6 +9,7 @@ on:
 
 env:
   IMAGE_NAME: "tomasdepi94/koronet"
+  DEPLOY_TO_ECS: false
 
 jobs:
   build-docker:
