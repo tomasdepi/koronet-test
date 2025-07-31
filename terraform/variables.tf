@@ -13,3 +13,11 @@ variable "aws_region" {
 variable "state_bucket" {
   default = "koronet-tf-state"
 }
+
+variable "dockerhub_username" {
+  sensitive = true
+}
+
+variable "dockerhub_password" {
+  sensitive = true
+}

@@ -1,4 +1,9 @@
-name: "Build Docker Image"
+name: "Build Docker Image and Deploy to ECS"
+
+inputs:
+  shouldDeployOnECS:
+    default: false
+    required: false
 
 on:
   workflow_dispatch:
@@ -45,3 +50,28 @@ jobs:
           echo "::notice:: Image: ${{ env.IMAGE_NAME }}@${{ steps.docker-build.outputs.digest }}"
           echo "::notice:: Digest: ${{ steps.docker-build.outputs.digest }}"
           echo "::notice:: Tag: ${{ github.ref_name }}"
+
+  deploy_ecr:
+    if: ${{ inputs.shouldDeployOnECS }}
+    runs-on: ubuntu-latest
+    name: Deploy
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Update ECS
+        run: |
+          aws ecs update-service \
+            --cluster koronet \
+            --service koronet \
+            --force-new-deployment
