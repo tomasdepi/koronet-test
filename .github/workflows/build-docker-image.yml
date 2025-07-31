@@ -1,12 +1,11 @@
 name: "Build Docker Image and Deploy to ECS"
 
-inputs:
-  shouldDeployOnECS:
-    default: false
-    required: false
-
 on:
   workflow_dispatch:
+    inputs:
+      shouldDeployOnECS:
+        default: false
+        type: boolean
   push:
     branches:
       - 'main'
@@ -52,7 +51,7 @@ jobs:
           echo "::notice:: Tag: ${{ github.ref_name }}"
 
   deploy_ecr:
-    if: ${{ inputs.shouldDeployOnECS }}
+    if: ${{ github.event.inputs.shouldDeployOnECS }}
     runs-on: ubuntu-latest
     name: Deploy
     steps:
