@@ -1,7 +1,7 @@
 [
   {
     "name": "webapp",
-    "image": "tomasdepi/koronoet:latest",
+    "image": "tomasdepi/koronet:latest",
     "essential": true,
     "portMappings": [
       { "containerPort": 8080, "hostPort": 8080, "protocol": "tcp" }

@@ -1,3 +1,18 @@
+locals {
+  container_definitions_raw = file("files/ecs_task_definition.json")
+  dockerhub_secret_arn      = aws_secretsmanager_secret.dockerhub.arn
+
+  container_definitions = jsonencode([
+    for key_value in jsondecode(local.container_definitions_raw) : merge(
+      key_value,
+      {
+        repositoryCredentials = {
+          credentialsParameter = local.dockerhub_secret_arn
+        }
+      }
+    )
+  ])
+}
 
 resource "aws_ecs_cluster" "koronet" {
   name = "koronet"
@@ -5,7 +20,7 @@ resource "aws_ecs_cluster" "koronet" {
 
 resource "aws_ecs_task_definition" "koronet" {
   family                = "koronet"
-  container_definitions = file("files/ecs_task_definition.json")
+  container_definitions = local.container_definitions
 
   cpu    = 1000
   memory = 512
@@ -33,4 +48,16 @@ resource "aws_ecs_service" "koronet" {
     container_name   = "webapp"
     container_port   = 8080
   }
+}
+
+resource "aws_secretsmanager_secret" "dockerhub" {
+  name = "dockerhub-credentials"
+}
+
+resource "aws_secretsmanager_secret_version" "dockerhub" {
+  secret_id = aws_secretsmanager_secret.dockerhub.id
+  secret_string = jsonencode({
+    username = var.dockerhub_username
+    password = var.dockerhub_password
+  })
 }
