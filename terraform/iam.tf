@@ -15,6 +15,6 @@ resource "aws_iam_policy_attachment" "ecs_task_execution_policy" {
 }
 
 resource "aws_iam_role" "koronet_task_role" {
-    name = "koronet-container-role"
-    assume_role_policy = file("files/assume_ecs_policy.json")
+  name               = "koronet-container-role"
+  assume_role_policy = file("files/assume_ecs_policy.json")
 }

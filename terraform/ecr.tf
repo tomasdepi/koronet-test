@@ -4,10 +4,10 @@ resource "aws_ecs_cluster" "koronet" {
 }
 
 resource "aws_ecs_task_definition" "koronet" {
-  family = "koronet"
+  family                = "koronet"
   container_definitions = file("files/ecs_task_definition.json")
 
-  cpu = 1000
+  cpu    = 1000
   memory = 512
 
   requires_compatibilities = ["FARGATE"]
@@ -24,7 +24,7 @@ resource "aws_ecs_service" "koronet" {
   iam_role        = aws_iam_role.koronet_ecs_task_execution_role.arn
 
   network_configuration {
-    subnets = module.vpc.private_subnets
+    subnets          = module.vpc.private_subnets
     assign_public_ip = false
   }
 

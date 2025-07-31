@@ -10,8 +10,8 @@ module "vpc" {
   public_subnets  = ["10.0.101.0/24", "10.0.102.0/24", "10.0.103.0/24"]
 
   # Since this should be as closed as prod environments, creating one NAT per AZ
-  enable_nat_gateway = true
-  single_nat_gateway = false
+  enable_nat_gateway     = true
+  single_nat_gateway     = false
   one_nat_gateway_per_az = true
 }
 
@@ -35,9 +35,9 @@ resource "aws_security_group" "koronet_lb_sg" {
 resource "aws_security_group" "service_security_group" {
   vpc_id = module.vpc.vpc_arn
   ingress {
-    from_port = 0
-    to_port   = 0
-    protocol  = "-1"
+    from_port       = 0
+    to_port         = 0
+    protocol        = "-1"
     security_groups = [aws_security_group.koronet_lb_sg.id]
   }
 
@@ -51,10 +51,10 @@ resource "aws_security_group" "service_security_group" {
 
 resource "aws_lb" "koronet_alb" {
   name               = "koronet"
-  internal = false
+  internal           = false
   load_balancer_type = "application"
-  subnets  = module.vpc.public_subnets
-  
+  subnets            = module.vpc.public_subnets
+
   security_groups = [aws_security_group.koronet_lb_sg.id]
 }
 
@@ -64,7 +64,7 @@ resource "aws_lb_listener" "http" {
   protocol          = "HTTP"
 
   default_action {
-    type = "forward"
+    type             = "forward"
     target_group_arn = aws_lb_target_group.webapp.arn
   }
 }
@@ -76,8 +76,8 @@ resource "aws_lb_target_group" "webapp" {
   target_type = "ip"
   vpc_id      = module.vpc.vpc_arn
   health_check {
-    matcher = "200"
-    path    = "/"
+    matcher             = "200"
+    path                = "/"
     interval            = 10
     timeout             = 2
     healthy_threshold   = 3
