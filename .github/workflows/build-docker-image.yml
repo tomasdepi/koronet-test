@@ -48,7 +48,7 @@ jobs:
           echo "::notice:: Tag: ${{ github.ref_name }}"
 
   deploy_ecr:
-    if: ${{ env.DEPLOY_TO_ECS }}
+    if: ${{ env.DEPLOY_TO_ECS == 'true' }}
     runs-on: ubuntu-latest
     needs: build-docker
     name: Deploy
