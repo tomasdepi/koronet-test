@@ -34,7 +34,6 @@ jobs:
           context: .
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          provenance: false
           push: true
           tags: |
             ${{ env.IMAGE_NAME }}:latest
@@ -43,9 +42,8 @@ jobs:
 
       - name: Output build data
         run: |
-          echo "::notice:: Image: ${{ env.IMAGE_NAME }}@${{ steps.docker-build.outputs.digest }}"
+          echo "::notice:: Image: ${{ steps.docker-build.outputs.imageid }}"
           echo "::notice:: Digest: ${{ steps.docker-build.outputs.digest }}"
-          echo "::notice:: Tag: ${{ github.ref_name }}"
 
   deploy_ecr:
     if: false

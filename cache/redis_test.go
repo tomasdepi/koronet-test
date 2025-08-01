@@ -17,7 +17,7 @@ func TestRedisConnection(t *testing.T) {
 
 	initTestViper()
 
-	rdb := StartRedis()
+	rdb := InitRedis(viper.GetString("REDIS_HOST"))
 	defer rdb.Close()
 
 	ctx := context.Background()
