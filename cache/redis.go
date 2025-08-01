@@ -5,7 +5,6 @@ import (
 	"log"
 
 	"github.com/redis/go-redis/v9"
-	"github.com/spf13/viper"
 )
 
 var (
@@ -13,9 +12,7 @@ var (
 	redisClient *redis.Client
 )
 
-func StartRedis() *redis.Client {
-
-	addr := viper.GetString("REDIS_HOST")
+func InitRedis(addr string) *redis.Client {
 
 	redisClient = redis.NewClient(&redis.Options{
 		Addr:     addr,
@@ -28,10 +25,4 @@ func StartRedis() *redis.Client {
 	}
 
 	return redisClient
-}
-
-func CloseRedis() {
-	if err := redisClient.Close(); err != nil {
-		log.Printf("Error closing Redis: %v", err)
-	}
 }

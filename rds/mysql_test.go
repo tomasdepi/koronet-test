@@ -30,11 +30,11 @@ func TestDBConnection(t *testing.T) {
 	)
 
 	DB, err := InitDB(connectionString)
-	defer CloseDB()
-
 	if err != nil {
 		t.Fatalf("Connection Failed: %v", err)
 	}
+
+	defer DB.Close()
 
 	err = DB.Ping()
 	if err != nil {

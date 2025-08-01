@@ -14,6 +14,8 @@ func InitDB(connectionString string) (*sql.DB, error) {
 
 	var err error
 
+	// dumb retry logic just for docker-compose
+	// although the healcheck is define, there is a delay between mysql is up and ready for connections
 	for i := 0; i < 10; i++ {
 		DB, err = sql.Open("mysql", connectionString)
 		if err == nil && DB.Ping() == nil {
@@ -26,10 +28,4 @@ func InitDB(connectionString string) (*sql.DB, error) {
 	}
 
 	return nil, err
-}
-
-func CloseDB() {
-	if err := DB.Close(); err != nil {
-		log.Printf("Error closing MySQL: %v", err)
-	}
 }

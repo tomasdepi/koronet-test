@@ -23,22 +23,24 @@ type App struct {
 
 func (app *App) Initialize() error {
 
-	connectionString := fmt.Sprintf("%v:%v@tcp(%v:3306)/%v",
+	mySqlconnectionString := fmt.Sprintf("%v:%v@tcp(%v:3306)/%v",
 		viper.GetString("MYSQL_USER"),
 		viper.GetString("MYSQL_PASS"),
 		viper.GetString("MYSQL_HOST"),
 		viper.GetString("MYSQL_DATABASE"),
 	)
 
+	redisAddress := viper.GetString("REDIS_HOST")
+
 	var err error
-	app.DB, err = rds.InitDB(connectionString)
+	app.DB, err = rds.InitDB(mySqlconnectionString)
 
 	if err != nil {
 		log.Fatal("err")
 		return err
 	}
 
-	app.redis = cache.StartRedis()
+	app.redis = cache.InitRedis(redisAddress)
 
 	app.Router = mux.NewRouter() //.StrictSlash(true)
 	app.handleRoutes()
